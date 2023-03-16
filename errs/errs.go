@@ -1,6 +1,7 @@
 package errs
 
 import (
+	"github.com/labstack/echo/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
