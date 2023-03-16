@@ -1,7 +1,6 @@
 package errs
 
 import (
-	"github.com/labstack/echo/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -24,14 +23,17 @@ func (a *AppError) Error() string {
 	return a.Message
 }
 
+// NewAppError creates a new AppError instance.
 func NewAppError(code ErrorCode, msg string) *AppError {
-	return &AppError{
+	he := &AppError{
 		Code:    code,
 		Message: msg,
 	}
+
+	return he
 }
 
-// NewEchoHttpError this method return echo.NewHttpError
+// NewEchoHttpError this method return a new instance HttpError
 func (a *AppError) NewEchoHttpError() error {
 	return echo.NewHTTPError(a.getHttpCode(), a.Error())
 }
