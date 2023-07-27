@@ -29,7 +29,18 @@ func GetConfigFromEnv(config interface{}) error {
 		return err
 	}
 
-	if err := validate.Struct(config); err != nil {
+	err := validate.Struct(config)
+	if err != nil {
+		if validationErr, ok := err.(validator.ValidationErrors); ok {
+			for _, fieldError := range validationErr {
+				return fieldError
+			}
+		}
+
+		if invalidValidationErr, ok := err.(*validator.InvalidValidationError); ok {
+			return invalidValidationErr
+		}
+
 		return err
 	}
 
