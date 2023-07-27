@@ -11,7 +11,7 @@ It builds upon the functionality of [Viper-go](https://github.com/spf13/viper), 
 ## Installation
 
 ```bash
-  go get github.com/andresxlp/gosuite
+  go get github.com/andresxlp/gosuite@latest
 ```
 ---
 ## Usage
