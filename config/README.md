@@ -62,7 +62,7 @@ func main() {
 
 #### Use it when your variables are in an .env file
 
-```env
+```dotenv
 SERVER_NAME=server-env
 APP_HOST=127.0.0.1
 APP_PORT=9000
@@ -111,6 +111,28 @@ func main() {
 ---
 
 ## Additional Info
+
+### Nested Struct
+
+For this type of `struct`, for example:
+```go
+type Config struct {
+	ServerName string `mapstructure:"server_name"`
+	App        App    `mapstructure:"app"`
+}
+
+type App struct {
+	Host string `mapstructure:"host"`
+	Port int    `mapstructure:"port"`
+}
+```
+The keys in the .env file must be configured as the nested structure as follows:
+```dotenv
+SERVER_NAME=sever-name
+APP_HOST=0.0.0.0
+APP_PORT=8080
+```
+
 
 ### Tags
 
