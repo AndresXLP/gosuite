@@ -95,7 +95,7 @@ type App struct {
 }
 
 func main() {
-	if err := config.SetEnvsFromFile(".develop.env"); err != nil {
+	if err := config.SetEnvsFromFile("server",".develop.env"); err != nil {
 		fmt.Printf("error setting variables in environment \n Error: %v", err)
 		return
 	}

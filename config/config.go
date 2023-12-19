@@ -52,7 +52,8 @@ func GetConfigFromEnv(config interface{}) error {
 // SetEnvsFromFile reads a file that contains environment variables in the format: 'VAR_NAME=var-value'
 // and sets these variables in the OS's environment.
 //
-// The fileName parameter specifies the name of the file to search for in the working directory.
+// The projectDirName specifies the folder name working directory
+// The fileNames parameter specifies the names of the files to search.
 func SetEnvsFromFile(projectDirName string, fileNames ...string) error {
 	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	cwd, _ := os.Getwd()
