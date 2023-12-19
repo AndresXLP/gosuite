@@ -17,6 +17,8 @@ variables in your application.
 
 ## Usage
 
+### 🔐💻
+
 #### Use it when your variables are set in your environment
 
 ```go
@@ -41,8 +43,8 @@ type App struct {
 
 func main() {
 	_ = os.Setenv("SERVER_NAME", "server-test")
-	_ = os.Setenv("APP_HOST", "0.0.0.0")
-	_ = os.Setenv("APP_PORT", "8080")
+	_ = os.Setenv("APP_HOST", "192.168.25.255")
+	_ = os.Setenv("APP_PORT", "3001")
 
 	cfg := Config{}
 
@@ -52,13 +54,15 @@ func main() {
 	}
 
 	fmt.Printf("The config with envs is %+v", cfg)
-	// output: The config with envs is {ServerName:server-test App:{Host:0.0.0.0 Port:8080}}
+	// output: The config with envs is {ServerName:server-test App:{Host:192.168.25.255 Port:3001}}
 
 }
 
 ```
 
 ---
+
+### 📄➡️💻
 
 #### Use it when your variables are in an .env file
 
@@ -147,6 +151,7 @@ we want to check if a field is required, we can use the \`validate="required"\` 
 
 - 🐍 [Viper-go](https://github.com/spf13/viper)
 - 🐹 [validator-go](https://github.com/go-playground/validator)
+- 🔐 [godotenv](https://github.com/joho/godotenv)
 
 ---
 

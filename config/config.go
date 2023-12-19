@@ -2,19 +2,17 @@ package config
 
 import (
 	"fmt"
-	"os"
 	"reflect"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
 var (
 	validate = validator.New()
 )
-
-const PathSep = string(os.PathSeparator)
 
 func init() {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -52,16 +50,9 @@ func GetConfigFromEnv(config interface{}) error {
 // and sets these variables in the OS's environment.
 //
 // The fileName parameter specifies the name of the file to search for in the working directory.
-func SetEnvsFromFile(fileName string) error {
-	viper.SetConfigFile(fmt.Sprintf("%s%s%s", getRootDir(), PathSep, fileName))
-
-	if err := viper.ReadInConfig(); err != nil {
+func SetEnvsFromFile(fileNames ...string) error {
+	if err := godotenv.Load(fileNames...); err != nil {
 		return err
-	}
-
-	for key, value := range viper.AllSettings() {
-		key = strings.ToUpper(key)
-		_ = os.Setenv(key, value.(string))
 	}
 
 	return nil
@@ -89,10 +80,4 @@ func bindEnvs(config interface{}, parts ...string) {
 			_ = viper.BindEnv(strings.Join(append(parts, value), "."))
 		}
 	}
-}
-
-// getRootDir, return the current working directory
-func getRootDir() string {
-	dir, _ := os.Getwd()
-	return dir
 }

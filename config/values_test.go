@@ -11,6 +11,9 @@ var kv = envKeyValue{value: map[string]interface{}{
 	"APP_SERVICE_NAME":      "service-name",
 	"APP_INTERVAL_TIME_OUT": "30s",
 	"APP_REQUIRED":          true,
+	"DB_HOST":               "192.168.1.1",
+	"DB_PORT":               5432,
+	"DB_NAME":               "configs",
 },
 }
 
@@ -41,4 +44,16 @@ func (v *envKeyValue) GetAppIntervalTimeOut() time.Duration {
 
 func (v *envKeyValue) GetAppRequired() bool {
 	return v.value["APP_REQUIRED"].(bool)
+}
+
+func (v *envKeyValue) GetDBHost() string {
+	return v.value["DB_HOST"].(string)
+}
+
+func (v *envKeyValue) GetDBPort() int {
+	return v.value["DB_PORT"].(int)
+}
+
+func (v *envKeyValue) GetDBName() string {
+	return v.value["DB_NAME"].(string)
 }
