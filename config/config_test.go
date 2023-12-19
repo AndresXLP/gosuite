@@ -10,7 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const fileName = ".%s.env"
+const (
+	fileName       = ".%s.env"
+	projectDirName = "config"
+)
 
 type App struct {
 	Port            int           `mapstructure:"port"`
@@ -89,7 +92,7 @@ func TestSetEnvsFromFile(t *testing.T) {
 	t.Run("should get the config when there are no errors", func(t *testing.T) {
 		cfg := Configuration{}
 
-		if err := config.SetEnvsFromFile(fmt.Sprintf(fileName, "testing")); err != nil {
+		if err := config.SetEnvsFromFile(projectDirName, fmt.Sprintf(fileName, "testing")); err != nil {
 			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
 			return
 		}
@@ -109,7 +112,7 @@ func TestSetEnvsFromFile(t *testing.T) {
 	t.Run("should get the config when read multiple envs files", func(t *testing.T) {
 		cfg := MultipleEnvFiles{}
 
-		if err := config.SetEnvsFromFile(fmt.Sprintf(fileName, "testing"), fmt.Sprintf(fileName, "other")); err != nil {
+		if err := config.SetEnvsFromFile(projectDirName, fmt.Sprintf(fileName, "testing"), fmt.Sprintf(fileName, "other")); err != nil {
 			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
 			return
 		}
@@ -140,7 +143,7 @@ func TestSetEnvsFromFile(t *testing.T) {
 
 	t.Run("should return an error opening file", func(t *testing.T) {
 		defer os.Clearenv()
-		if err := config.SetEnvsFromFile(fmt.Sprintf(fileName, "not")); err == nil {
+		if err := config.SetEnvsFromFile(projectDirName, fmt.Sprintf(fileName, "not")); err == nil {
 			t.Errorf(fmt.Sprintf(shouldBeError, err))
 			return
 		}

@@ -2,7 +2,10 @@ package config
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"reflect"
+	"regexp"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -50,8 +53,17 @@ func GetConfigFromEnv(config interface{}) error {
 // and sets these variables in the OS's environment.
 //
 // The fileName parameter specifies the name of the file to search for in the working directory.
-func SetEnvsFromFile(fileNames ...string) error {
-	if err := godotenv.Load(fileNames...); err != nil {
+func SetEnvsFromFile(projectDirName string, fileNames ...string) error {
+	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
+	cwd, _ := os.Getwd()
+	rootPath := string(re.Find([]byte(cwd)))
+
+	filePaths := make([]string, len(fileNames))
+	for i, fileName := range fileNames {
+		filePaths[i] = filepath.Join(rootPath, fileName)
+	}
+
+	if err := godotenv.Load(filePaths...); err != nil {
 		return err
 	}
 
