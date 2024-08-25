@@ -6,13 +6,13 @@ import (
 	"testing"
 	"time"
 
-	"config"
+	"github.com/andresxlp/gosuite/config"
 	"github.com/stretchr/testify/assert"
 )
 
 const (
-	fileName       = ".%s.env"
-	projectDirName = "config"
+	FILENAME       = ".%s.env"
+	PROJECTDIRNAME = "config"
 )
 
 type App struct {
@@ -47,6 +47,16 @@ type DataBase struct {
 	Name string `mapstructure:"name"`
 }
 
+type InvalidMoldTags struct {
+	Another int `mod:"whatever:9000" mapstructure:"another"`
+}
+
+type RequiredTags struct {
+	OtherAnother  int `validate:"required" mapstructure:"other_another"`
+	OtherAnother2 int `validate:"required" mapstructure:"other_another"`
+	OtherAnother3 int `validate:"required" mapstructure:"other_another"`
+}
+
 func TestGetConfigFromEnv(t *testing.T) {
 	t.Run("should get the config when there are no errors", func(t *testing.T) {
 		_ = os.Setenv(kv.GetEnvKey("HOST_DIR"))
@@ -54,7 +64,13 @@ func TestGetConfigFromEnv(t *testing.T) {
 		_ = os.Setenv(kv.GetEnvKey("APP_SERVICE_NAME"))
 		_ = os.Setenv(kv.GetEnvKey("APP_INTERVAL_TIME_OUT"))
 		_ = os.Setenv(kv.GetEnvKey("APP_REQUIRED"))
-		defer os.Clearenv()
+		defer func() {
+			os.Unsetenv("HOST_DIR")
+			os.Unsetenv("APP_PORT")
+			os.Unsetenv("APP_SERVICE_NAME")
+			os.Unsetenv("APP_INTERVAL_TIME_OUT")
+			os.Unsetenv("APP_REQUIRED")
+		}()
 		cfg := Configuration{}
 		if err := config.GetConfigFromEnv(&cfg); err != nil {
 			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
@@ -69,16 +85,30 @@ func TestGetConfigFromEnv(t *testing.T) {
 
 	t.Run("should return an error when binding wrong vars", func(t *testing.T) {
 		_ = os.Setenv("TEST_VAL", "some")
-		defer os.Clearenv()
+		defer os.Unsetenv("TEST_VAL")
 		cfg := AdditionalConfig{}
 		if err := config.GetConfigFromEnv(&cfg); err == nil {
 			t.Errorf(fmt.Sprintf(shouldBeError, err))
 		}
 	})
 
+	t.Run("should return an error when invalid mold tag", func(t *testing.T) {
+		cfg := InvalidMoldTags{}
+		if err := config.GetConfigFromEnv(&cfg); err == nil {
+			t.Errorf(shouldNotBeError, err)
+		}
+	})
+
+	t.Run("should return an error when required tag", func(t *testing.T) {
+		cfg := RequiredTags{}
+		if err := config.GetConfigFromEnv(&cfg); err == nil {
+			t.Errorf(shouldNotBeError, err)
+		}
+	})
+
 	t.Run("should empty config when missing tag: 'mapstructure'", func(t *testing.T) {
 		_ = os.Setenv("TEST", "123")
-		defer os.Clearenv()
+		defer os.Unsetenv("TEST")
 		cfg := MissingMapstructureTag{}
 		if err := config.GetConfigFromEnv(&cfg); err != nil {
 			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
@@ -92,11 +122,17 @@ func TestSetEnvsFromFile(t *testing.T) {
 	t.Run("should get the config when there are no errors", func(t *testing.T) {
 		cfg := Configuration{}
 
-		if err := config.SetEnvsFromFile(projectDirName, fmt.Sprintf(fileName, "testing")); err != nil {
+		if err := config.SetEnvsFromFile(PROJECTDIRNAME, fmt.Sprintf(FILENAME, "testing")); err != nil {
 			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
 			return
 		}
-		defer os.Clearenv()
+		defer func() {
+			os.Unsetenv("HOST_DIR")
+			os.Unsetenv("APP_PORT")
+			os.Unsetenv("APP_SERVICE_NAME")
+			os.Unsetenv("APP_INTERVAL_TIME_OUT")
+			os.Unsetenv("APP_REQUIRED")
+		}()
 		if err := config.GetConfigFromEnv(&cfg); err != nil {
 			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
 			return
@@ -112,12 +148,21 @@ func TestSetEnvsFromFile(t *testing.T) {
 	t.Run("should get the config when read multiple envs files", func(t *testing.T) {
 		cfg := MultipleEnvFiles{}
 
-		if err := config.SetEnvsFromFile(projectDirName, fmt.Sprintf(fileName, "testing"), fmt.Sprintf(fileName, "other")); err != nil {
+		if err := config.SetEnvsFromFile(PROJECTDIRNAME, fmt.Sprintf(FILENAME, "testing"), fmt.Sprintf(FILENAME, "other")); err != nil {
 			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
 			return
 		}
 
-		defer os.Clearenv()
+		defer func() {
+			os.Unsetenv("HOST_DIR")
+			os.Unsetenv("APP_PORT")
+			os.Unsetenv("APP_SERVICE_NAME")
+			os.Unsetenv("APP_INTERVAL_TIME_OUT")
+			os.Unsetenv("APP_REQUIRED")
+			os.Unsetenv("DB_HOST")
+			os.Unsetenv("DB_PORT")
+			os.Unsetenv("DB_NAME")
+		}()
 		if err := config.GetConfigFromEnv(&cfg); err != nil {
 			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
 			return
@@ -142,8 +187,7 @@ func TestSetEnvsFromFile(t *testing.T) {
 	})
 
 	t.Run("should return an error opening file", func(t *testing.T) {
-		defer os.Clearenv()
-		if err := config.SetEnvsFromFile(projectDirName, fmt.Sprintf(fileName, "not")); err == nil {
+		if err := config.SetEnvsFromFile(PROJECTDIRNAME, fmt.Sprintf(FILENAME, "not")); err == nil {
 			t.Errorf(fmt.Sprintf(shouldBeError, err))
 			return
 		}

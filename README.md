@@ -1,5 +1,11 @@
 # 🧰 GoSuite
 
+---
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/AndresXLP/gosuite?label=version)
+[![Coverage Status](https://coveralls.io/repos/github/AndresXLP/gosuite/badge.svg?branch=feat/add-new-tag)](https://coveralls.io/github/AndresXLP/gosuite?branch=feat/add-new-tag)
+![License](https://img.shields.io/dub/l/vibe-d.svg)
+
+
 Golang Package common tools.
 
 ---

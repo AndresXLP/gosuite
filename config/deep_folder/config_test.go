@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"config"
+	"github.com/andresxlp/gosuite/config"
 )
 
 const (
