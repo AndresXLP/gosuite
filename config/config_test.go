@@ -16,45 +16,49 @@ const (
 )
 
 type App struct {
-	Port            int           `mapstructure:"port"`
-	ServiceName     string        `mapstructure:"service_name"`
-	IntervalTimeOut time.Duration `mapstructure:"interval_time_out"`
-	Required        bool          `mapstructure:"required" validate:"required"`
+	Port            int           `env:"port"`
+	ServiceName     string        `env:"service_name"`
+	IntervalTimeOut time.Duration `env:"interval_time_out"`
+	Required        bool          `env:"required" validate:"required"`
 }
 
 type Configuration struct {
-	Host string `mapstructure:"host_dir" validate:"required"`
-	App  App    `mapstructure:"app"`
+	Host string `env:"host_dir" validate:"required"`
+	App  App    `env:"app"`
 }
 
 type AdditionalConfig struct {
-	TestVal int `mapstructure:"test_val"`
+	TestVal int `env:"test_val"`
 }
 
-type MissingMapstructureTag struct {
+type MissingEnvTag struct {
 	Test int
 }
 
 type MultipleEnvFiles struct {
-	Host     string   `mapstructure:"host_dir" validate:"required"`
-	App      App      `mapstructure:"app"`
-	DataBase DataBase `mapstructure:"DB" validate:"required"`
+	Host     string   `env:"host_dir" validate:"required"`
+	App      App      `env:"app"`
+	DataBase DataBase `env:"DB" validate:"required"`
 }
 
 type DataBase struct {
-	Host string `mapstructure:"host"`
-	Port int    `mapstructure:"port"`
-	Name string `mapstructure:"name"`
+	Host string `env:"host"`
+	Port int    `env:"port"`
+	Name string `env:"name"`
 }
 
 type InvalidMoldTags struct {
-	Another int `mod:"whatever:9000" mapstructure:"another"`
+	Another int `mod:"whatever:9000" env:"another"`
 }
 
 type RequiredTags struct {
-	OtherAnother  int `validate:"required" mapstructure:"other_another"`
-	OtherAnother2 int `validate:"required" mapstructure:"other_another"`
-	OtherAnother3 int `validate:"required" mapstructure:"other_another"`
+	OtherAnother  int `validate:"required" env:"other_another"`
+	OtherAnother2 int `validate:"required" env:"other_another"`
+	OtherAnother3 int `validate:"required" env:"other_another"`
+}
+
+type PersonalTag struct {
+	Personal string `personalEnvName:"personal"`
 }
 
 func TestGetConfigFromEnv(t *testing.T) {
@@ -92,6 +96,15 @@ func TestGetConfigFromEnv(t *testing.T) {
 		}
 	})
 
+	t.Run("should get the config when use a PersonalTagNane", func(t *testing.T) {
+		cfg := PersonalTag{}
+		_ = os.Setenv("PERSONAL", "some")
+		defer os.Unsetenv("PERSONAL")
+		if err := config.GetConfigFromEnv(&cfg, "personalEnvName"); err != nil {
+			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
+		}
+	})
+
 	t.Run("should return an error when invalid mold tag", func(t *testing.T) {
 		cfg := InvalidMoldTags{}
 		if err := config.GetConfigFromEnv(&cfg); err == nil {
@@ -106,10 +119,10 @@ func TestGetConfigFromEnv(t *testing.T) {
 		}
 	})
 
-	t.Run("should empty config when missing tag: 'mapstructure'", func(t *testing.T) {
+	t.Run("should empty config when missing tag: 'env'", func(t *testing.T) {
 		_ = os.Setenv("TEST", "123")
 		defer os.Unsetenv("TEST")
-		cfg := MissingMapstructureTag{}
+		cfg := MissingEnvTag{}
 		if err := config.GetConfigFromEnv(&cfg); err != nil {
 			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
 			return

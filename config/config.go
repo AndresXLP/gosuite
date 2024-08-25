@@ -11,7 +11,12 @@ import (
 	"github.com/go-playground/mold/v4/modifiers"
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
+)
+
+const (
+	DefaultTag = "env"
 )
 
 var (
@@ -25,10 +30,18 @@ func init() {
 
 // GetConfigFromEnv reads the fields of the given struct and looks up environment variables
 // that match their names, associating the values accordingly. The config argument is a pointer to the struct.
-func GetConfigFromEnv(config interface{}) error {
+//
+// By default, we use the DefaultTag, if you want to override this value
+// you can do so using the PersonalTagName parameter.
+func GetConfigFromEnv(config interface{}, PersonalTagName ...string) error {
 	bindEnvs(config)
 
-	if err := viper.Unmarshal(&config); err != nil {
+	if err := viper.Unmarshal(&config, func(config *mapstructure.DecoderConfig) {
+		config.TagName = DefaultTag
+		if PersonalTagName != nil {
+			config.TagName = PersonalTagName[0]
+		}
+	}); err != nil {
 		return err
 	}
 
@@ -77,7 +90,7 @@ func bindEnvs(config interface{}, parts ...string) {
 	for i := 0; i < vc.NumField(); i++ {
 		field := vc.Field(i)
 		structField := vc.Type().Field(i)
-		value, ok := structField.Tag.Lookup("mapstructure")
+		value, ok := structField.Tag.Lookup(DefaultTag)
 
 		if !ok {
 			continue
