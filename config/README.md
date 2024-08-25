@@ -32,13 +32,13 @@ import (
 )
 
 type Config struct {
-	ServerName string `mapstructure:"server_name"`
-	App        App    `mapstructure:"app"`
+	ServerName string `env:"server_name"`
+	App        App    `env:"app"`
 }
 
 type App struct {
-	Host string `mapstructure:"host"`
-	Port int    `mapstructure:"port"`
+	Host string `env:"host"`
+	Port int    `env:"port"`
 }
 
 func main() {
@@ -85,13 +85,13 @@ import (
 )
 
 type Config struct {
-	ServerName string `mapstructure:"server_name"`
-	App        App    `mapstructure:"app"`
+	ServerName string `env:"server_name"`
+	App        App    `env:"app"`
 }
 
 type App struct {
-	Host string `mapstructure:"host"`
-	Port int    `mapstructure:"port"`
+	Host string `env:"host"`
+	Port int    `env:"port"`
 }
 
 func main() {
@@ -121,13 +121,13 @@ func main() {
 For this type of `struct`, for example:
 ```go
 type Config struct {
-	ServerName string `mapstructure:"server_name"`
-	App        App    `mapstructure:"app"`
+	ServerName string `env:"server_name"`
+	App        App    `env:"app"`
 }
 
 type App struct {
-	Host string `mapstructure:"host"`
-	Port int    `mapstructure:"port"`
+	Host string `env:"host"`
+	Port int    `env:"port"`
 }
 ```
 The keys in the .env file must be configured as the nested structure as follows:
@@ -139,19 +139,19 @@ APP_PORT=8080
 
 
 ### Tags
-
-The \`mapstructure="server_name"\` tag that allows us to bind our environment variable to the fields of the structure.
-
-We can also use the [validator](https://github.com/go-playground/validator) tags, to add more validations for example if
-we want to check if a field is required, we can use the \`validate="required"\` tag
+- `env`: `env:"server_name"` tag that allows us to bind our environment variable to the fields of the structure.
+  - If you want to use a custom tag, you can use the `PersonalTagName` parameter in the `GetConfigFromEnv` function to change the default tag.
+- `validate`: `validate:"required"` tag that allow use the [validator](https://github.com/go-playground/validator).
+- `mod`: `mod:"default=true"` tag that allow use the [mold](https://github.com/go-playground/mold).
 
 ---
 
 ## Package Dependency
 
 - 🐍 [Viper-go](https://github.com/spf13/viper)
-- 🐹 [validator-go](https://github.com/go-playground/validator)
 - 🔐 [godotenv](https://github.com/joho/godotenv)
+- 🔍 [validator-go](https://github.com/go-playground/validator)
+- ✍️ [mold-go](https://github.com/go-playground/mold)
 
 ---
 

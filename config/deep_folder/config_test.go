@@ -15,15 +15,15 @@ const (
 )
 
 type App struct {
-	Port            int           `mapstructure:"port"`
-	ServiceName     string        `mapstructure:"service_name"`
-	IntervalTimeOut time.Duration `mapstructure:"interval_time_out"`
-	Required        bool          `mapstructure:"required" validate:"required"`
+	Port            int           `env:"port"`
+	ServiceName     string        `env:"service_name"`
+	IntervalTimeOut time.Duration `env:"interval_time_out"`
+	Required        bool          `env:"required" validate:"required"`
 }
 
 type Configuration struct {
-	Host string `mapstructure:"host_dir" validate:"required"`
-	App  App    `mapstructure:"app"`
+	Host string `env:"host_dir" validate:"required"`
+	App  App    `env:"app"`
 }
 
 func TestSetEnvsFromFile(t *testing.T) {
