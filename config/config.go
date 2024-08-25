@@ -1,13 +1,14 @@
 package config
 
 import (
-	"fmt"
+	"context"
 	"os"
 	"path/filepath"
 	"reflect"
 	"regexp"
 	"strings"
 
+	"github.com/go-playground/mold/v4/modifiers"
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
@@ -15,6 +16,7 @@ import (
 
 var (
 	validate = validator.New()
+	conform  = modifiers.New()
 )
 
 func init() {
@@ -30,30 +32,24 @@ func GetConfigFromEnv(config interface{}) error {
 		return err
 	}
 
+	if err := conform.Struct(context.Background(), config); err != nil {
+		return err
+	}
+
 	if err := validate.Struct(config); err != nil {
-		var errs []string
-		if validationErr, ok := err.(validator.ValidationErrors); ok {
-			for _, fieldError := range validationErr {
-				errs = append(errs, fmt.Sprintf(fieldError.Error()))
-			}
-			return fmt.Errorf(strings.Join(errs, ";\n"))
-		}
-
-		if invalidValidationErr, ok := err.(*validator.InvalidValidationError); ok {
-			return invalidValidationErr
-		}
-
 		return err
 	}
 
 	return nil
 }
 
-// SetEnvsFromFile reads a file that contains environment variables in the format: 'VAR_NAME=var-value'
-// and sets these variables in the OS's environment.
+// SetEnvsFromFile reads a file containing environment variables and adds them to the OS's environment.
 //
-// The projectDirName specifies the folder name working directory
-// The fileNames parameter specifies the names of the files to search.
+// - projectDirName parameter specifies the folder name working directory.
+//
+// - fileNames parameter specifies the names of the files to search.
+//
+// Use only in development environments.
 func SetEnvsFromFile(projectDirName string, fileNames ...string) error {
 	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	cwd, _ := os.Getwd()
