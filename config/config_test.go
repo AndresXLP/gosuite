@@ -77,7 +77,7 @@ func TestGetConfigFromEnv(t *testing.T) {
 		}()
 		cfg := Configuration{}
 		if err := config.GetConfigFromEnv(&cfg); err != nil {
-			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
+			t.Errorf(shouldNotBeError, err)
 		}
 
 		assert.Equal(t, kv.GetHostDir(), cfg.Host, fmt.Sprintf(hostDirShouldMsg, kv.GetHostDir(), cfg.Host))
@@ -92,7 +92,7 @@ func TestGetConfigFromEnv(t *testing.T) {
 		defer os.Unsetenv("TEST_VAL")
 		cfg := AdditionalConfig{}
 		if err := config.GetConfigFromEnv(&cfg); err == nil {
-			t.Errorf(fmt.Sprintf(shouldBeError, err))
+			t.Errorf(shouldBeError, err)
 		}
 	})
 
@@ -101,7 +101,7 @@ func TestGetConfigFromEnv(t *testing.T) {
 		_ = os.Setenv("PERSONAL", "some")
 		defer os.Unsetenv("PERSONAL")
 		if err := config.GetConfigFromEnv(&cfg, "personalEnvName"); err != nil {
-			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
+			t.Errorf(shouldBeError, err)
 		}
 	})
 
@@ -124,7 +124,7 @@ func TestGetConfigFromEnv(t *testing.T) {
 		defer os.Unsetenv("TEST")
 		cfg := MissingEnvTag{}
 		if err := config.GetConfigFromEnv(&cfg); err != nil {
-			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
+			t.Errorf(shouldBeError, err)
 			return
 		}
 		assert.Equal(t, 0, cfg.Test, fmt.Sprintf("TEST should be '0' and is %v", cfg.Test))
@@ -136,7 +136,7 @@ func TestSetEnvsFromFile(t *testing.T) {
 		cfg := Configuration{}
 
 		if err := config.SetEnvsFromFile(PROJECTDIRNAME, fmt.Sprintf(FILENAME, "testing")); err != nil {
-			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
+			t.Errorf(shouldBeError, err)
 			return
 		}
 		defer func() {
@@ -147,7 +147,7 @@ func TestSetEnvsFromFile(t *testing.T) {
 			os.Unsetenv("APP_REQUIRED")
 		}()
 		if err := config.GetConfigFromEnv(&cfg); err != nil {
-			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
+			t.Errorf(shouldBeError, err)
 			return
 		}
 
@@ -162,7 +162,7 @@ func TestSetEnvsFromFile(t *testing.T) {
 		cfg := MultipleEnvFiles{}
 
 		if err := config.SetEnvsFromFile(PROJECTDIRNAME, fmt.Sprintf(FILENAME, "testing"), fmt.Sprintf(FILENAME, "other")); err != nil {
-			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
+			t.Errorf(shouldBeError, err)
 			return
 		}
 
@@ -177,7 +177,7 @@ func TestSetEnvsFromFile(t *testing.T) {
 			os.Unsetenv("DB_NAME")
 		}()
 		if err := config.GetConfigFromEnv(&cfg); err != nil {
-			t.Errorf(fmt.Sprintf(shouldNotBeError, err))
+			t.Errorf(shouldBeError, err)
 			return
 		}
 
@@ -194,14 +194,14 @@ func TestSetEnvsFromFile(t *testing.T) {
 	t.Run("should return an error when missing required variable", func(t *testing.T) {
 		cfg := Configuration{}
 		if err := config.GetConfigFromEnv(&cfg); err == nil {
-			t.Errorf(fmt.Sprintf(shouldBeError, err))
+			t.Errorf(shouldBeError, err)
 			return
 		}
 	})
 
 	t.Run("should return an error opening file", func(t *testing.T) {
 		if err := config.SetEnvsFromFile(PROJECTDIRNAME, fmt.Sprintf(FILENAME, "not")); err == nil {
-			t.Errorf(fmt.Sprintf(shouldBeError, err))
+			t.Errorf(shouldBeError, err)
 			return
 		}
 	})
