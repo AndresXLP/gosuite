@@ -13,7 +13,10 @@ require (
 	google.golang.org/grpc v1.77.0
 )
 
+require github.com/mitchellh/mapstructure v1.5.0 // indirect
+
 require (
+	github.com/andresxlp/gosuite v1.0.0
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.11 // indirect

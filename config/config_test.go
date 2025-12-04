@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/andresxlp/gosuite/config"
+	"github.com/shepherd-go/gosuite/config"
 	"github.com/stretchr/testify/assert"
 )
 
