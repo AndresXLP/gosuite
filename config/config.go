@@ -10,8 +10,8 @@ import (
 
 	"github.com/go-playground/mold/v4/modifiers"
 	"github.com/go-playground/validator/v10"
+	mapstructure "github.com/go-viper/mapstructure/v2"
 	"github.com/joho/godotenv"
-	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 )
 
