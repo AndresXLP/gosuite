@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/andresxlp/gosuite/config"
+	"github.com/shepherd-go/gosuite/config"
 )
 
 const (
@@ -31,12 +31,12 @@ func TestSetEnvsFromFile(t *testing.T) {
 		cfg := Configuration{}
 
 		if err := config.SetEnvsFromFile(projectDirName, fmt.Sprintf(fileName, "testing")); err != nil {
-			t.Errorf(fmt.Sprintf("It shouldn't be a error and it is %v", err))
+			t.Errorf("It shouldn't be a error and it is %v", err)
 			return
 		}
 		defer os.Clearenv()
 		if err := config.GetConfigFromEnv(&cfg); err != nil {
-			t.Errorf(fmt.Sprintf("It shouldn't be a error and it is %v", err))
+			t.Errorf("It shouldn't be a error and it is %v", err)
 			return
 		}
 	})
