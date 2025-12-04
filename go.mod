@@ -1,4 +1,4 @@
-module github.com/andresxlp/gosuite
+module github.com/shepherd-go/gosuite
 
 go 1.25
 
